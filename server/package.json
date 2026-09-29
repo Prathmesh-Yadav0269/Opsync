@@ -1,0 +1,40 @@
+{
+  "name": "opsync-server",
+  "version": "1.0.0",
+  "description": "OPSYNC Backend Server - Phase 1 Foundation + Auth + RBAC",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "bootstrap:admin": "node scripts/bootstrapAdmin.js",
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:qa": "node scripts/seedQA.js",
+    "reset:qa": "node scripts/resetManualQA.js",
+    "test:final": "node scripts/testFinalAcceptance.js",
+    "test:order2": "node scripts/testPhase6Correction2.js",
+    "verify:correction": "node scripts/verifyPhase6Correction.js",
+    "test:phase6": "node scripts/testPhase6.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.1.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.1",
+    "multer": "^2.3.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

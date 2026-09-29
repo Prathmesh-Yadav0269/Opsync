@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: theme('colors.zinc.200');
+  }
+  .dark * {
+    border-color: theme('colors.zinc.800');
+  }
+}
+
+/* Accessible focus ring style */
+:focus-visible {
+  outline: 2px solid theme('colors.brand.500');
+  outline-offset: 2px;
+}
