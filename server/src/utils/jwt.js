@@ -17,6 +17,7 @@ export const getCookieOptions = () => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
+    path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   };
 };
@@ -31,5 +32,6 @@ export const clearTokenCookie = (res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
+    path: '/',
   });
 };

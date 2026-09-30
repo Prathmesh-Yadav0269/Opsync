@@ -1,4 +1,4 @@
-import { apiClient } from './client.js';
+import { apiClient, getStoredToken } from './client.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -11,9 +11,16 @@ export const filesApi = {
     const formData = new FormData();
     formData.append('file', file);
 
+    const token = getStoredToken();
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}/files`, {
       method: 'POST',
       credentials: 'include',
+      headers,
       body: formData,
     });
 
@@ -28,9 +35,16 @@ export const filesApi = {
     const formData = new FormData();
     formData.append('file', file);
 
+    const token = getStoredToken();
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE_URL}/api/chats/${roomId}/files`, {
       method: 'POST',
       credentials: 'include',
+      headers,
       body: formData,
     });
 

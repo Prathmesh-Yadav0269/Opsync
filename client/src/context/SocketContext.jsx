@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext.jsx';
+import { getStoredToken } from '../api/client.js';
 
 const SocketContext = createContext(null);
 
@@ -35,9 +36,12 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Initialize Socket.IO connection with credentials
+    const token = getStoredToken();
+
+    // Initialize Socket.IO connection with credentials and token fallback
     const socketClient = io(SOCKET_URL, {
       withCredentials: true,
+      auth: token ? { token } : undefined,
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: Infinity,

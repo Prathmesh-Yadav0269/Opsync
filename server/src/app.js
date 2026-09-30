@@ -19,6 +19,9 @@ import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
+// Enable trust proxy for secure cookie handling and HTTPS detection behind reverse proxies (Render, Cloudflare)
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(
   helmet({
@@ -26,16 +29,22 @@ app.use(
   })
 );
 
-// CORS configuration - strict origin + credentials support
-const allowedOrigins = env.CLIENT_URL
+// CORS configuration - strict origin + credentials support with slash tolerance
+const rawOrigins = env.CLIENT_URL
   ? env.CLIENT_URL.split(',').map((o) => o.trim()).filter(Boolean)
   : ['http://localhost:5173'];
+
+const allowedOrigins = rawOrigins.map((o) => o.replace(/\/$/, ''));
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (mobile apps, curl, server-to-server)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
+        return callback(null, true);
+      }
+      const normalizedOrigin = origin.replace(/\/$/, '');
+      if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(null, false);
@@ -43,7 +52,7 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
 

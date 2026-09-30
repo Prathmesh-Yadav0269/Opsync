@@ -9,6 +9,33 @@ export class ApiError extends Error {
   }
 }
 
+// Token management helpers for resilient cross-site authentication
+const TOKEN_KEY = 'opsync_token';
+
+export const getStoredToken = () => {
+  try {
+    return localStorage.getItem(TOKEN_KEY) || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const setStoredToken = (token) => {
+  try {
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  } catch (e) {}
+};
+
+export const removeStoredToken = () => {
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch (e) {}
+};
+
 export const apiClient = async (endpoint, options = {}) => {
   const {
     method = 'GET',
@@ -20,8 +47,10 @@ export const apiClient = async (endpoint, options = {}) => {
 
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const token = getStoredToken();
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...headers,
   };
 

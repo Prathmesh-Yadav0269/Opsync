@@ -18,14 +18,20 @@ export const setIO = (io) => {
 export const getIO = () => ioInstance;
 
 export const initSocketServer = (httpServer) => {
-  const allowedOrigins = env.CLIENT_URL
+  const rawOrigins = env.CLIENT_URL
     ? env.CLIENT_URL.split(',').map((o) => o.trim()).filter(Boolean)
     : ['http://localhost:5173'];
+
+  const allowedOrigins = rawOrigins.map((o) => o.replace(/\/$/, ''));
 
   const io = new Server(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) {
+          return callback(null, true);
+        }
+        const normalizedOrigin = origin.replace(/\/$/, '');
+        if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
           callback(new Error(`Origin ${origin} not allowed by Socket.IO CORS`));

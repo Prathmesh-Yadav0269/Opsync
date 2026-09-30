@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../api/auth.js';
+import { setStoredToken, removeStoredToken } from '../api/client.js';
 import { useTheme } from './ThemeContext.jsx';
 
 const AuthContext = createContext(null);
@@ -22,9 +23,11 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
         syncUserSettings(response.data.user);
       } else {
+        removeStoredToken();
         setUser(null);
       }
     } catch (err) {
+      removeStoredToken();
       setUser(null);
     } finally {
       setLoading(false);
@@ -37,6 +40,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await authApi.login({ email, password });
+    if (response?.data?.token) {
+      setStoredToken(response.data.token);
+    }
     if (response?.data?.user) {
       setUser(response.data.user);
       syncUserSettings(response.data.user);
@@ -46,6 +52,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     const response = await authApi.register({ name, email, password });
+    if (response?.data?.token) {
+      setStoredToken(response.data.token);
+    }
     if (response?.data?.user) {
       setUser(response.data.user);
       syncUserSettings(response.data.user);
@@ -59,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
+      removeStoredToken();
       setUser(null);
     }
   };
